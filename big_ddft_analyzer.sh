@@ -36,4 +36,4 @@ do
 	fi
 done
 
-sh ~/wormk/code/basic_spin_orbit_applier.sh collected_spectrum.xlsx $splitting $plot_title
+sh ~/wormk/code/basic_spin_orbit_applier.sh collected_spectrum.xlsx $splitting "$plot_title"
