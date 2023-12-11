@@ -82,7 +82,7 @@ with open("submit_es.sh",'w') as sub:
 	sub.write("\n")
 	#for ulysses
 	sub.write('scp -r "${scratch}_'+name[:-8]+'"/ /scratch/ezraa \n')
-	sub.write('rm -r "${scratch}_'+name[:-8]+'" \n')
+	sub.write('rm -r "${scratch}_'+name[:-8]+'"/ \n')
 	sub.write("\n")
 	sub.write('qchem.latest -save -nt '+ncores+' '+name+' '+name[:-3]+'.out "${scratch}_'+name[:-8]+'" \n')
 	sub.write(" \n")
