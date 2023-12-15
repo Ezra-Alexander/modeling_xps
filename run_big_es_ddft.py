@@ -11,8 +11,15 @@ print(ref, target)
 ncores = sys.argv[3] #number of cores
 gs_out=sys.argv[4] #gs output file with Lowdin populations
 gs_scratch=sys.argv[5] #ground state scratch directory
+orbital=sys.argv[6] #either 's' for the P1s orbital or 'p' for the P2p
 
-mo_index=read_lowdin(gs_out,"P",target,2,"p")
+if orbital=="p"
+	mo_index=read_lowdin(gs_out,"P",target,2,orbital)
+elif orbital=="s":
+	mo_index=read_lowdin(gs_out,"P",target,1,orbital)
+else:
+	raise Exception("orbital type not yet supported - please enter either 's' for the P1s orbital or 'p' for the P2p")
+
 mo_index=int(mo_index)
 print("Targeting MO", mo_index)
 

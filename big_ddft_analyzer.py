@@ -26,9 +26,15 @@ iteration=int(sys.argv[3]) #which step of the excel creation you are on. For ind
 directory=sys.argv[4] #name of the directory, which should be of the form P_{N}, where N is the P-specific index.
 ligand=sys.argv[5] #the ligand used here. Abbreviate. "F" for fluorine, "Cl" for chlorine
 bulk_weight=int(sys.argv[6]) #the weighting to be applied to bulk P relative to P-uc and surface P-4c
+orbital=sys.agrv[7] #either 's' for the P1s orbital or 'p' for the P2p
 
-energy_cutoff=139 #empirical parameter for upper bound on expected CEBEs. CEBEs above this will be considered to have failed to converge
-bond_cutoff=2.75 #empirical parameter for upper bound on chemical bonds
+bond_cutoff=3.0 #empirical parameter for upper bound on chemical bonds
+if orbital=="p":
+	energy_cutoff=141 #empirical parameter for upper bound on expected CEBEs. CEBEs above this will be considered to have failed to converge
+elif orbital=="s":
+	energy_cutoff=2160 #empirical parameter for upper bound on expected CEBEs. CEBEs above this will be considered to have failed to converge
+else:
+	raise Exception("orbital type not supported - please use either 's' for the P1s orbital or 'p' for the P2p")
 
 #compute the CEBE
 gs_energy = get_energy(gs_out) 
@@ -42,10 +48,16 @@ p_index=directory[2:-1] #note - leaving as a string
 atoms,coords=get_geom_io(gs_out)
 
 #read Lowdin populations
-#read first orb on the target
-orb_num=read_lowdin(es_out,"P",p_index,2,"p") 
-#compare to minimum ground state P 2p orb
-min_p2p=read_lowdin(gs_out,"P",str(0),2,"p")
+if orbital=="p":
+	#read first orb on the target
+	orb_num=read_lowdin(es_out,"P",p_index,2,"p") 
+	#compare to minimum ground state P 2p orb
+	min_p2p=read_lowdin(gs_out,"P",str(0),2,"p")
+elif orbital=="s":
+	#read first orb on the target
+	orb_num=read_lowdin(es_out,"P",p_index,1,"s") 
+	#compare to minimum ground state P 2p orb
+	min_p2p=read_lowdin(gs_out,"P",str(0),1,"s")
 if orb_num<min_p2p and energy_difference<energy_cutoff: #1
 	print("Excitation of", directory[:-1], "successful with energy", energy_difference, "and excited index",orb_num)
 	converged=True
@@ -140,9 +152,10 @@ if converged==True:
 		active_row=active_row+1
 
 
-	wb.save("collected_spectrum.xlsx")
+
 
 
 else: #I could write a new input that uses different convergence paramters?
 	print("A new input file has been written for the excitation of", directory[:-1]) #note. I have not actually done this yet
 
+wb.save("collected_spectrum.xlsx")
