@@ -14,6 +14,8 @@ ref=sys.argv[2]
 ncores = sys.argv[3]
 #charge
 charge=sys.argv[4]
+#priority. based on size of studied system. short, normal, high, veryhigh
+priority=sys.argv[5]
 
 flag=0
 label=""
@@ -63,23 +65,46 @@ with open("gs_ddft.in", "w") as out:
 		else:
 			out.write(line)
 
-with open("submit_gs.sh", "w") as sbatch:
-	sbatch.write("#!/bin/bash \n")
-	sbatch.write("\n")
-	sbatch.write("#SBATCH -J gs_"+label+"_ddft.in \n")
-	sbatch.write("#SBATCH -o gs_ddft.log \n")
-	sbatch.write("#SBATCH -e gs_ddft.log \n")
-	sbatch.write("#SBATCH --time unlimited \n")
-	sbatch.write("#SBATCH -c " + ncores + " \n")
-	sbatch.write("#SBATCH --mem-per-cpu 16000 \n")
-	sbatch.write("#SBATCH -p veryhigh \n")
-	sbatch.write(" \n")
-	sbatch.write('scratch="scratch_'+label+'_gs_ddft" \n')
-	sbatch.write('curr_d=$PWD \n')
-	sbatch.write(" \n")
-	sbatch.write("rm -r $QCSCRATCH/$scratch \n")
-	sbatch.write("cp -r $scratch $QCSCRATCH \n")
-	sbatch.write(" \n")
-	sbatch.write("qchem.latest -save -nt " + ncores +" gs_ddft.in gs_ddft.out $scratch \n")
-	sbatch.write(" \n")
-	sbatch.write("cp -r $QCSCRATCH/$scratch $curr_d")
+if priority=="veryhigh":
+	with open("submit_gs.sh", "w") as sbatch:
+		sbatch.write("#!/bin/bash \n")
+		sbatch.write("\n")
+		sbatch.write("#SBATCH -J gs_"+label+"_ddft.in \n")
+		sbatch.write("#SBATCH -o gs_ddft.log \n")
+		sbatch.write("#SBATCH -e gs_ddft.log \n")
+		sbatch.write("#SBATCH --time unlimited \n")
+		sbatch.write("#SBATCH -c " + ncores + " \n")
+		sbatch.write("#SBATCH --mem-per-cpu 16000 \n")
+		sbatch.write("#SBATCH -p veryhigh \n")
+		sbatch.write(" \n")
+		sbatch.write('scratch="scratch_'+label+'_gs_ddft" \n')
+		sbatch.write('curr_d=$PWD \n')
+		sbatch.write(" \n")
+		sbatch.write("rm -r $QCSCRATCH/$scratch \n")
+		sbatch.write("cp -r $scratch $QCSCRATCH \n")
+		sbatch.write(" \n")
+		sbatch.write("qchem.latest -save -nt " + ncores +" gs_ddft.in gs_ddft.out $scratch \n")
+		sbatch.write(" \n")
+		sbatch.write("cp -r $QCSCRATCH/$scratch $curr_d")
+elif priority=="short":
+	with open("submit_gs.sh", "w") as sbatch:
+		sbatch.write("#!/bin/bash \n")
+		sbatch.write("\n")
+		sbatch.write("#SBATCH -J gs_"+label+"_ddft.in \n")
+		sbatch.write("#SBATCH -o gs_ddft.log \n")
+		sbatch.write("#SBATCH -e gs_ddft.log \n")
+		sbatch.write("#SBATCH -c " + ncores + " \n")
+		sbatch.write("#SBATCH --mem-per-cpu 4000 \n")
+		sbatch.write("#SBATCH -p short \n")
+		sbatch.write(" \n")
+		sbatch.write('scratch="scratch_'+label+'_gs_ddft" \n')
+		sbatch.write('curr_d=$PWD \n')
+		sbatch.write(" \n")
+		sbatch.write("rm -r $QCSCRATCH/$scratch \n")
+		sbatch.write("cp -r $scratch $QCSCRATCH \n")
+		sbatch.write(" \n")
+		sbatch.write("qchem.latest -save -nt " + ncores +" gs_ddft.in gs_ddft.out $scratch \n")
+		sbatch.write(" \n")
+		sbatch.write("cp -r $QCSCRATCH/$scratch $curr_d")
+else:
+	raise Exception("File not written - chosen priority not yet coded")

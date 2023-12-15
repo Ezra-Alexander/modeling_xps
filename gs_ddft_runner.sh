@@ -10,7 +10,7 @@
 
 #PENDING BUG FIX - if reference geometry section is shorter than xyz geometry, it curtails geometry
 
-#the qchem plot output file. needs to be qchem and not xyz because it takes the spin and charge
+#must be a .xyz
 xyz=$1
 #reference ddft.in
 ref=$2
@@ -18,7 +18,9 @@ ref=$2
 cores=$3
 #charge. Should always be 0, but just in case
 charge=$4
+#priority. based on size of studied system. short, normal, high, veryhigh
+priority=$5
 
-python3 ~/code/gs_ddft_maker.py $xyz $ref $cores $charge
+python3 ~/code/gs_ddft_maker.py $xyz $ref $cores $charge $priority
 
 sbatch submit_gs.sh
