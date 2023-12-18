@@ -7,9 +7,9 @@ gs_scratch=$2 #scratch directory for ground state. Needs to have no "/" at the e
 ncores=$3 # of cores you want to run on. recommend 8
 gs_out=$4 # ground state output file, for lowdin populations
 orbital=$5 #either 's' for the P1s orbital or 'p' for the P2p
-n_sub=$5 #the number of P you want to excite
-p_max=$6 #the number of P in your QD
-priotity=$7 #priority. based on size of studied system. short, normal, high, veryhigh
+n_sub=$6 #the number of P you want to excite
+p_max=$7 #the number of P in your QD
+priotity=$8 #priority. based on size of studied system. short, normal, high, veryhigh
 
 i=1
 chosen=()
