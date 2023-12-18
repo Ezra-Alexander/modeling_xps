@@ -11,6 +11,7 @@ gs_scratch=$2 #scratch directory for ground state. Needs to have no "/" at the e
 ncores=$3 # of cores you want to run on. recommend 8
 gs_out=$4 # ground state output file, for lowdin populations
 orbital=$5 #either 's' for the P1s orbital or 'p' for the P2p
+priority=$6 #priority. based on size of studied system. short, normal, high, veryhigh
 
 shift 5
 
@@ -28,7 +29,7 @@ while [[ $# -gt 0 ]]; do
 	scp "../${gs_out}" .
 
 	#Written for Telemachus
-	python3 ~/code/run_big_es_ddft.py $reference $num $ncores $gs_out $gs_scratch $orbital
+	python3 ~/code/run_big_es_ddft.py $reference $num $ncores $gs_out $gs_scratch $orbital $priority
 
 	sbatch submit_es.sh
 

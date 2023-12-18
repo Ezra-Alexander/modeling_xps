@@ -12,6 +12,7 @@ ncores = sys.argv[3] #number of cores
 gs_out=sys.argv[4] #gs output file with Lowdin populations
 gs_scratch=sys.argv[5] #ground state scratch directory
 orbital=sys.argv[6] #either 's' for the P1s orbital or 'p' for the P2p
+priority=sys.argv[7] #priority. based on size of studied system. short, normal, high, veryhigh
 
 if orbital=="p"
 	mo_index=read_lowdin(gs_out,"P",target,2,orbital)
@@ -70,28 +71,56 @@ with open(name,'w') as out:
 		else:
 			out.write(line)
 
-with open("submit_es.sh",'w') as sub:
-	sub.write("#!/bin/bash \n")
-	sub.write("\n")
-	sub.write("#SBATCH -J "+name[:-3]+" \n")
-	sub.write("#SBATCH -o "+name[:-3]+".log \n")
-	sub.write("#SBATCH -e "+name[:-3]+".log \n")
-	sub.write("#SBATCH --time unlimited \n")
-	sub.write("#SBATCH -c "+ncores+" \n")
-	sub.write("#SBATCH --mem-per-cpu 16000 \n")
-	sub.write("#SBATCH -p veryhigh \n")
-	sub.write(" \n")
-	sub.write('scratch='+gs_scratch+' \n')
-	sub.write("rm -r /scratch/ezraa/$scratch/ \n")
-	sub.write(" \n")
-	sub.write("scp -r ../$scratch/ . \n")
-	sub.write('mv $scratch/ "${scratch}_'+name[:-8]+'"/ \n')
-	sub.write("\n")
-	#for ulysses
-	sub.write('scp -r "${scratch}_'+name[:-8]+'"/ /scratch/ezraa \n')
-	sub.write('rm -r "${scratch}_'+name[:-8]+'"/ \n')
-	sub.write("\n")
-	sub.write('qchem.latest -save -nt '+ncores+' '+name+' '+name[:-3]+'.out "${scratch}_'+name[:-8]+'" \n')
-	sub.write(" \n")
-	sub.write("rm -r /scratch/ezraa/${scratch}_"+name[:-8]+"/ \n")
-	sub.write('rm -r "${scratch}_'+name[:-8]+'"/ \n')
+if priority=="veryhigh":
+	with open("submit_es.sh",'w') as sub:
+		sub.write("#!/bin/bash \n")
+		sub.write("\n")
+		sub.write("#SBATCH -J "+name[:-3]+" \n")
+		sub.write("#SBATCH -o "+name[:-3]+".log \n")
+		sub.write("#SBATCH -e "+name[:-3]+".log \n")
+		sub.write("#SBATCH --time unlimited \n")
+		sub.write("#SBATCH -c "+ncores+" \n")
+		sub.write("#SBATCH --mem-per-cpu 16000 \n")
+		sub.write("#SBATCH -p veryhigh \n")
+		sub.write(" \n")
+		sub.write('scratch='+gs_scratch+' \n')
+		sub.write("rm -r /scratch/ezraa/$scratch/ \n")
+		sub.write(" \n")
+		sub.write("scp -r ../$scratch/ . \n")
+		sub.write('mv $scratch/ "${scratch}_'+name[:-8]+'"/ \n')
+		sub.write("\n")
+		#for ulysses
+		sub.write('scp -r "${scratch}_'+name[:-8]+'"/ /scratch/ezraa \n')
+		sub.write('rm -r "${scratch}_'+name[:-8]+'"/ \n')
+		sub.write("\n")
+		sub.write('qchem.latest -save -nt '+ncores+' '+name+' '+name[:-3]+'.out "${scratch}_'+name[:-8]+'" \n')
+		sub.write(" \n")
+		sub.write("rm -r /scratch/ezraa/${scratch}_"+name[:-8]+"/ \n")
+		sub.write('rm -r "${scratch}_'+name[:-8]+'"/ \n')
+elif priority=="short":
+	with open("submit_es.sh",'w') as sub:
+		sub.write("#!/bin/bash \n")
+		sub.write("\n")
+		sub.write("#SBATCH -J "+name[:-3]+" \n")
+		sub.write("#SBATCH -o "+name[:-3]+".log \n")
+		sub.write("#SBATCH -e "+name[:-3]+".log \n")
+		sub.write("#SBATCH -c "+ncores+" \n")
+		sub.write("#SBATCH --mem-per-cpu 4000 \n")
+		sub.write("#SBATCH -p short \n")
+		sub.write(" \n")
+		sub.write('scratch='+gs_scratch+' \n')
+		sub.write("rm -r /scratch/ezraa/$scratch/ \n")
+		sub.write(" \n")
+		sub.write("scp -r ../$scratch/ . \n")
+		sub.write('mv $scratch/ "${scratch}_'+name[:-8]+'"/ \n')
+		sub.write("\n")
+		#for ulysses
+		sub.write('scp -r "${scratch}_'+name[:-8]+'"/ /scratch/ezraa \n')
+		sub.write('rm -r "${scratch}_'+name[:-8]+'"/ \n')
+		sub.write("\n")
+		sub.write('qchem.latest -save -nt '+ncores+' '+name+' '+name[:-3]+'.out "${scratch}_'+name[:-8]+'" \n')
+		sub.write(" \n")
+		sub.write("rm -r /scratch/ezraa/${scratch}_"+name[:-8]+"/ \n")
+		sub.write('rm -r "${scratch}_'+name[:-8]+'"/ \n')
+else:
+	raise Exception("File not written - chosen priority not yet coded")

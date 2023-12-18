@@ -9,6 +9,7 @@ gs_out=$4 # ground state output file, for lowdin populations
 orbital=$5 #either 's' for the P1s orbital or 'p' for the P2p
 n_sub=$5 #the number of P you want to excite
 p_max=$6 #the number of P in your QD
+priotity=$7 #priority. based on size of studied system. short, normal, high, veryhigh
 
 i=1
 chosen=()
@@ -24,4 +25,4 @@ while [[ $i -le $n_sub ]]; do
 	
 done
 
-sh ~/code/es_run_big_ddft.sh $reference $gs_scratch $ncores $gs_out $orbital $chosen
+sh ~/code/es_run_big_ddft.sh $reference $gs_scratch $ncores $gs_out $orbital $priority $chosen
