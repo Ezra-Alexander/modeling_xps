@@ -13,27 +13,19 @@ priority=$8 #priority. based on size of studied system. short, normal, high, ver
 
 i=1
 chosen=()
+last=0
 while [[ $i -le $n_sub ]]; do
-	#statements
 	temp=$((1 + $RANDOM % $p_max))
 
-	if [[ $i == 1 ]]; then
-	    	chosen+=$temp
-	    	chosen+=" "
-	    	i=$(( i + 1 ))
-	elif [[ $i == 2 ]]; then
-		if [[ !  ${chosen[@]}  =~  "${temp} "   ]]; then 
-	    	chosen+=$temp
-	    	chosen+=" "
-	    	i=$(( i + 1 ))
+	if [[ !  ${chosen[@]}  =~  " ${temp} " && !  ${chosen[0]}  =~  ${temp}  ]]; then 
+		if [[ $temp != $last ]]; then
+			chosen+=($temp)
+    		i=$(( i + 1 ))
+    		last=$temp
 		fi
-	else
-		if [[ !  ${chosen[@]}  =~  " ${temp} "   ]]; then 
-	    	chosen+=$temp
-	    	chosen+=" "
-	    	i=$(( i + 1 ))
-		fi
+    	
 	fi
+
 			
 done
 
