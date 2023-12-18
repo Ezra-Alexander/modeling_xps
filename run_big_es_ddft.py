@@ -14,7 +14,7 @@ gs_scratch=sys.argv[5] #ground state scratch directory
 orbital=sys.argv[6] #either 's' for the P1s orbital or 'p' for the P2p
 priority=sys.argv[7] #priority. based on size of studied system. short, normal, high, veryhigh
 
-if orbital=="p"
+if orbital=="p":
 	mo_index=read_lowdin(gs_out,"P",target,2,orbital)
 elif orbital=="s":
 	mo_index=read_lowdin(gs_out,"P",target,1,orbital)
