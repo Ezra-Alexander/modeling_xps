@@ -29,4 +29,4 @@ while [[ $i -le $n_sub ]]; do
 			
 done
 
-sh ~/code/es_run_big_ddft.sh $reference $gs_scratch $ncores $gs_out $orbital $priority $chosen
+sh ~/code/es_run_big_ddft.sh $reference $gs_scratch $ncores $gs_out $orbital $priority ${chosen[@]}
