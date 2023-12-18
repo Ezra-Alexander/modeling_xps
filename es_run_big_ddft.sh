@@ -13,7 +13,7 @@ gs_out=$4 # ground state output file, for lowdin populations
 orbital=$5 #either 's' for the P1s orbital or 'p' for the P2p
 priority=$6 #priority. based on size of studied system. short, normal, high, veryhigh
 
-shift 5
+shift 6
 
 #the following inputs should be a list of P atom-specific indexes. 
 
