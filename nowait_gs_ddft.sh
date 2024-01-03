@@ -15,8 +15,10 @@ charge=$4 #charge. Should always be 0, but just in case
 
 priority=$5 #priority. based on size of studied system. short, normal, high, veryhigh
 
+spin=$6 #spin. the number that goes after the charge in a qchem input. usually 1 but not necessarily
+
 python3 ~/code/output_xyz.py $opt_out
 
 xyz_name=${opt_out%.*}".xyz"
 
-sh ~/code/gs_ddft_runner.sh $xyz_name $ref $cores $charge $priority
+sh ~/code/gs_ddft_runner.sh $xyz_name $ref $cores $charge $priority $spin

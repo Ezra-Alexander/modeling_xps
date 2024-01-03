@@ -20,7 +20,9 @@ cores=$3
 charge=$4
 #priority. based on size of studied system. short, normal, high, veryhigh
 priority=$5
+#spin. the number that goes after the charge in a qchem input. usually 1 but not necessarily
+spin=$6
 
-python3 ~/code/gs_ddft_maker.py $xyz $ref $cores $charge $priority
+python3 ~/code/gs_ddft_maker.py $xyz $ref $cores $charge $priority $spin
 
 sbatch submit_gs.sh

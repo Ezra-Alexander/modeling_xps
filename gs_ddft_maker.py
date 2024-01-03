@@ -16,6 +16,7 @@ ncores = sys.argv[3]
 charge=sys.argv[4]
 #priority. based on size of studied system. short, normal, high, veryhigh
 priority=sys.argv[5]
+sp=sys.argv[6] #no longer assuming spin 1
 
 flag=0
 label=""
@@ -29,7 +30,6 @@ print(label)
 with open(xyz, "r") as q:
 	geom = q.readlines()[2:]
 
-sp="1" #assuming spin 1
 
 lines = []
 with open(ref, "r") as re:
