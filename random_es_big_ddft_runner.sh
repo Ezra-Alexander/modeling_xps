@@ -11,13 +11,17 @@ n_sub=$6 #the number of P you want to excite
 p_max=$7 #the number of P in your QD
 priority=$8 #priority. based on size of studied system. short, normal, high, veryhigh
 
+shift 8 #to follow are any number of P indices to exclude from random selection
+
+exclude=$@
+
 i=1
 chosen=()
 last=0
 while [[ $i -le $n_sub ]]; do
 	temp=$((1 + $RANDOM % $p_max))
 
-	if [[ !  ${chosen[@]}  =~  " ${temp} " && !  ${chosen[0]}  =~  ${temp}  ]]; then 
+	if [[ !  ${chosen[@]}  =~  " ${temp} " && !  ${chosen[0]}  =~  ${temp} && !  ${exclude[@]}  =~  " ${temp} " && !  ${exclude[0]}  =~  ${temp} ]]; then 
 		if [[ $temp != $last ]]; then
 			chosen+=($temp)
     		i=$(( i + 1 ))
@@ -28,5 +32,5 @@ while [[ $i -le $n_sub ]]; do
 
 			
 done
-
+#echo ${chosen[@]}
 sh ~/code/es_run_big_ddft.sh $reference $gs_scratch $ncores $gs_out $orbital $priority ${chosen[@]}
