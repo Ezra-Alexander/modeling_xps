@@ -4,6 +4,8 @@ from qchem_helper import *
 
 #makes the es ddft inputs and submit scripts.
 #configured for big dots on Telemachus
+#basically the same as the other one but actually reads the beta gs Lowdins to determine the mo index. Necessary when the gs is unrestricted
+#note that this still runs a beta hole by default. Still unsure if alpha vs beta hole matters for these systems
 
 ref = sys.argv[1] #reference es.in
 target = sys.argv[2] #P atom-specific index 
@@ -15,9 +17,9 @@ orbital=sys.argv[6] #either 's' for the P1s orbital or 'p' for the P2p
 priority=sys.argv[7] #priority. based on size of studied system. short, normal, high, veryhigh
 
 if orbital=="p":
-	mo_index=read_lowdin(gs_out,"P",target,2,orbital)
+	mo_index=read_beta_lowdin(gs_out,"P",target,2,orbital)
 elif orbital=="s":
-	mo_index=read_lowdin(gs_out,"P",target,1,orbital)
+	mo_index=read_beta_lowdin(gs_out,"P",target,1,orbital)
 else:
 	raise Exception("orbital type not yet supported - please enter either 's' for the P1s orbital or 'p' for the P2p")
 
@@ -27,9 +29,10 @@ print("Targeting MO", mo_index)
 with open(gs_out,'r') as out: #get max electrons
 	for i,line in enumerate(out):
 		if line.find("beta")!= -1:
-			line=line.strip().split()
-			max_e=line[2]
-			break
+                    line=line.strip().split()
+                    alpha_max_e=line[2]
+                    beta_max_e=line[5]
+                    break
 
 atoms,coords=get_geom_io(gs_out)
 
@@ -45,10 +48,10 @@ geom_flag= 0
 with open(name,'w') as out:
 	for i,line in enumerate(lines):
 		if occ_flag==2:
-			out.write("1:"+str(mo_index-1)+" "+str(mo_index+1)+":"+max_e+" \n")
+			out.write("1:"+str(mo_index-1)+" "+str(mo_index+1)+":"+beta_max_e+" \n")
 			occ_flag = 0
 		elif occ_flag==1:
-			out.write("1:"+str(max_e) +" \n")
+			out.write("1:"+str(alpha_max_e) +" \n")
 			occ_flag = occ_flag+1
 		elif line.find('$occupied') != -1 and occ_flag==0:
 			out.write(line)
@@ -86,17 +89,17 @@ if priority=="veryhigh":
 		sub.write('scratch='+gs_scratch+' \n')
 		sub.write("rm -r /scratch/ezraa/$scratch/ \n")
 		sub.write(" \n")
-		# sub.write("scp -r ../$scratch/ . \n")
-		# sub.write('mv $scratch/ "${scratch}_'+name[:-8]+'"/ \n')
-		# sub.write("\n")
-		# sub.write('scp -r "${scratch}_'+name[:-8]+'"/ /scratch/ezraa \n')
-		# sub.write('rm -r "${scratch}_'+name[:-8]+'"/ \n')
-		sub.write('scp -r ../$scratch/ /scratch/ezraa/"${scratch}_'+name[:-8]+'" \n')
+		sub.write("scp -r ../$scratch/ . \n")
+		sub.write('mv $scratch/ "${scratch}_'+name[:-8]+'"/ \n')
+		sub.write("\n")
+		#for ulysses
+		sub.write('scp -r "${scratch}_'+name[:-8]+'"/ /scratch/ezraa \n')
+		sub.write('rm -r "${scratch}_'+name[:-8]+'"/ \n')
 		sub.write("\n")
 		sub.write('qchem.latest -save -nt '+ncores+' '+name+' '+name[:-3]+'.out "${scratch}_'+name[:-8]+'" \n')
 		sub.write(" \n")
 		sub.write("rm -r /scratch/ezraa/${scratch}_"+name[:-8]+"/ \n")
-		#sub.write('rm -r "${scratch}_'+name[:-8]+'"/ \n')
+		sub.write('rm -r "${scratch}_'+name[:-8]+'"/ \n')
 elif priority=="short":
 	with open("submit_es.sh",'w') as sub:
 		sub.write("#!/bin/bash \n")
