@@ -59,6 +59,9 @@ with open(name,'w') as out:
 		elif geom_flag==1:
 			geom_flag=geom_flag+1
 			out.write(line)
+		elif line.find('mem_total') != -1:
+			mem_total=line.strip().split()[1]
+			out.write(line)
 		elif geom_flag>1:
 			if line.find('$end')!=-1:
 				geom_flag=0
@@ -80,7 +83,7 @@ if priority=="veryhigh":
 		sub.write("#SBATCH -e "+name[:-3]+".log \n")
 		sub.write("#SBATCH --time unlimited \n")
 		sub.write("#SBATCH -c "+ncores+" \n")
-		sub.write("#SBATCH --mem-per-cpu 16000 \n")
+		sub.write("#SBATCH --mem-per-cpu "+mem_total+" \n")
 		sub.write("#SBATCH -p veryhigh \n")
 		sub.write(" \n")
 		sub.write('scratch='+gs_scratch+' \n')
@@ -105,7 +108,7 @@ elif priority=="short":
 		sub.write("#SBATCH -o "+name[:-3]+".log \n")
 		sub.write("#SBATCH -e "+name[:-3]+".log \n")
 		sub.write("#SBATCH -c "+ncores+" \n")
-		sub.write("#SBATCH --mem-per-cpu 4000 \n")
+		sub.write("#SBATCH --mem-per-cpu "+mem_total+" \n")
 		sub.write("#SBATCH -p short \n")
 		sub.write(" \n")
 		sub.write('scratch='+gs_scratch+' \n')
