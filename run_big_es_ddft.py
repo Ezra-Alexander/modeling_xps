@@ -64,6 +64,12 @@ with open(name,'w') as out:
 			out.write(line)
 		elif geom_flag>1:
 			if line.find('$end')!=-1:
+
+				if len(atoms)>geom_flag-2: #accounts for geometries longer than the reference geometry section
+					n_more=len(atoms)-geom_flag+2
+					for j in range(n_more):
+						out.write(atoms[geom_flag-2+j]+" " + str(coords[geom_flag-2+j][0])+" "+ str(coords[geom_flag-2+j][1])+" "+ str(coords[geom_flag-2+j][2])+" \n")
+
 				geom_flag=0
 				out.write(line)
 			elif geom_flag-2>= len(atoms):
