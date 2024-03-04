@@ -21,9 +21,11 @@ sp=sys.argv[6] #no longer assuming spin 1
 flag=0
 label=""
 for i,char in enumerate(xyz): #make a label algorithmically. requires .xyzs to be labeled
-	if char=="_":
+	if char=="_" and flag==0:
 		flag=flag+1
-	elif flag==1:
+	elif char==".":
+		flag=0
+	elif flag>0:
 		label=label+char
 print(label)
 
@@ -55,6 +57,10 @@ with open("gs_ddft.in", "w") as out:
 			geom_flag=geom_flag+1
 
 		elif geom_flag > 1 and line.find('$end') != -1:
+			if len(geom)>geom_flag-2:
+				n_more=len(geom)-geom_flag+2
+				for j in range(n_more):
+					out.write(geom[geom_flag-2+j])
 			geom_flag=0
 			out.write(line)
 

@@ -8,8 +8,6 @@
 #should be run in the parent directory of each of the individual core excitations
 #may run into labeling trouble if running multiple jobs from .xyzs of the same name
 
-#PENDING BUG FIX - if reference geometry section is shorter than xyz geometry, it curtails geometry
-
 #must be a .xyz
 xyz=$1
 #reference ddft.in
